@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>美Gu恐慌指数 VIX 监控</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0a0e17;--cd:#111827;--bd:#1e293b;--tx:#e2e8f0;--dm:#94a3b8;--gn:#10b981;--rd:#ef4444;--yl:#f59e0b;--bl:#3b82f6;--pu:#8b5cf6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+.hd{background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom:1px solid var(--bd);padding:14px 18px}
+.hd h1{font-size:1.2rem;font-weight:700}.sb{color:var(--dm);font-size:.75rem;margin-top:2px}
+.gd{display:grid;gap:10px;padding:10px 14px}
+.ca{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.ca h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--dm);margin-bottom:8px}
+.mr{display:flex;gap:8px;flex-wrap:wrap}
+.mi{flex:1;min-width:75px;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:10px 8px;text-align:center}
+.ml{font-size:.6rem;color:var(--dm);text-transform:uppercase;letter-spacing:1px}
+.mv{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums;margin:2px 0}
+.mc{font-size:.7rem;font-weight:600}
+.sb{display:inline-block;font-size:.9rem;font-weight:800;padding:3px 14px;border-radius:5px;margin:3px 0}
+.sd{font-size:.65rem;color:var(--dm)}
+.sl{display:flex;justify-content:space-between;margin-top:6px;font-size:.58rem;color:var(--dm);flex-wrap:wrap;gap:4px}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:6px}
+.si{text-align:center}.sv{font-size:.9rem;font-weight:700}.sl2{font-size:.58rem;color:var(--dm);margin-top:1px}
+.pb{height:4px;background:linear-gradient(to right,var(--gn),var(--yl),var(--rd));border-radius:3px;margin-top:5px;position:relative}
+.pm{position:absolute;top:-3px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid white;transform:translateX(-50%)}
+table{width:100%;border-collapse:collapse;font-size:.7rem}
+th{text-align:left;color:var(--dm);font-weight:500;padding:4px 6px;border-bottom:1px solid var(--bd)}
+td{padding:3px 6px;border-bottom:1px solid rgba(30,41,59,0.5);font-variant-numeric:tabular-nums}
+tr:hover{background:rgba(255,255,255,0.03)}
+.rk{color:var(--dm);width:28px}.vr{color:var(--rd);font-weight:600}.vy{color:var(--yl);font-weight:600}
+.cl{display:flex;flex-direction:column;gap:4px}
+.ci{display:flex;justify-content:space-between;align-items:center;padding:4px 7px;background:rgba(255,255,255,0.03);border-radius:4px;border-left:3px solid var(--bd)}
+.cn{font-weight:600;font-size:.72rem}.cd{font-size:.62rem;color:var(--dm)}.cv{font-weight:700}
+.fg{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-size:.65rem}
+.fc{background:rgba(255,255,255,0.03);border-radius:4px;padding:6px 4px;text-align:center}
+.fz{font-size:.6rem;color:var(--dm)}.fv{font-size:.75rem;font-weight:700}.fp{font-size:.58rem;color:var(--dm)}
+.bt-row{display:flex;flex-wrap:wrap;gap:8px}.bt-card{flex:1;min-width:150px;background:rgba(255,255,255,0.03);border-radius:6px;padding:10px}
+.bt-th{font-size:.7rem;font-weight:700;margin-bottom:4px}
+.bt-h{font-size:.6rem;color:var(--dm);margin:3px 0}
+.inf{font-size:.62rem;color:var(--dm);line-height:1.5;padding:7px 9px;background:rgba(59,130,246,0.04);border-radius:6px;border-left:2px solid var(--bl);margin-top:6px}
+.inf b{color:var(--tx)} .inf i{color:var(--yl)}
+.cw{position:relative;height:240px}.cw canvas{width:100%!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+@media(max-width:768px){.g2,.g21{grid-template-columns:1fr}.fg{grid-template-columns:repeat(5,1fr);font-size:.55rem}.mv{font-size:.85rem}.hd h1{font-size:1rem}}
+.ft{text-align:center;padding:12px;color:var(--dm);font-size:.62rem;border-top:1px solid var(--bd);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="hd">
+  <h1>🇺🇸 美Gu恐慌指数 — VIX × 标普500 × 纳斯达克100</h1>
+  <div class="sb" id="ut">加载中...</div>
+</div>
+<div class="gd">
+  <!-- Market row -->
+  <div class="mr">
+    <div class="mi" id="vb"><div class="ml">VIX恐慌</div><div class="mv">--</div></div>
+    <div class="mi" id="sb2"><div class="ml">S&P 500</div><div class="mv">--</div></div>
+    <div class="mi" id="nb"><div class="ml">NASDAQ100</div><div class="mv">--</div></div>
+    <div class="mi" id="sg"><div class="ml">投资信号</div><div class="sb">--</div></div>
+  </div>
+
+  <!-- How to read -->
+  <div class="ca inf">
+    <b>📖 怎么看：</b>
+    <b>VIX</b>=市场恐慌（越高越怕）。<b>分位数</b>=当前在历史中的排名（52%=比一半日子高）。
+    <b>σ</b>=偏离均值几个标准差（>2σ=极度恐慌，<-1σ=极度平静）。
+    <b>MA20/50/200</b>=均线，短上穿长=恐慌升。<b>散点图</b>=VIX-股价负相关，点往右下=恐慌高股价低。
+    <b>远期收益</b>=过去35年中，VIX在某区间时买入持有N月的平均收益&波动范围。
+    <b>回测</b>=用历史验证信号，"胜率"=买入后赚钱比例，"最大回撤"=最惨亏多少。
+  </div>
+
+  <!-- Stats + percentiles -->
+  <div class="g2">
+    <div class="ca"><h3>📊 VIX统计</h3><div class="sg" id="st"></div></div>
+    <div class="ca"><h3>📈 当前位置</h3>
+      <div class="sv" id="pv" style="text-align:center;font-size:1.4rem">--</div>
+      <div class="sl2" style="text-align:center">历史分位数</div>
+      <div class="pb" id="pb2"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.58rem;color:var(--dm);margin-top:2px"><span>平静</span><span>正常</span><span>恐慌</span></div>
+      <div class="sl" id="slv"></div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="g2">
+    <div class="ca"><h3>📉 VIX近一年走势(均线)</h3><div class="cw"><canvas id="cv"></canvas></div></div>
+    <div class="ca"><h3>📊 VIX vs SPX 散点+回归线</h3><div class="cw"><canvas id="cs"></canvas></div>
+      <div class="inf" id="cr_spx" style="margin-top:6px;text-align:center"></div>
+    </div>
+  </div>
+  <div class="ca"><h3>📊 VIX vs NDX 散点+回归线</h3>
+    <div class="cw"><canvas id="cn"></canvas></div>
+    <div class="inf" id="cr_ndx" style="margin-top:6px;text-align:center"></div>
+  </div>
+
+  <!-- Backtesting -->
+  <div class="ca"><h3>🧪 信号回测：不同VIX阈值买入SPX的历史表现</h3>
+    <div class="inf" style="margin-bottom:8px">下表展示各阈值下买入SPX后3/6/12个月的平均收益、<b>±2σ置信区间</b>（95%的收益落在这个范围内）、<b>胜率</b>（赚钱比例）和<b>最大回撤</b>。置信区间越窄信号越可靠。</div>
+    <div class="bt-row" id="bt_grid"></div>
+  </div>
+
+  <!-- Forward Returns -->
+  <div class="ca"><h3>📈 远期收益：不同恐慌度买入SPX的N月后平均涨跌</h3>
+    <div class="inf" style="margin-bottom:6px">avg=平均收益，<b>[L,H]=95%置信区间</b>（±2个标准差）→ 区间不跨0说明信号有统计显著性</div>
+    <div class="fg" id="fw_spx"></div></div>
+  <div class="ca"><h3>📈 远期收益：NDX</h3><div class="fg" id="fw_ndx"></div></div>
+
+  <!-- Peaks + Crisis -->
+  <div class="g21">
+    <div class="ca"><h3>🔺 35年单日峰值Top30</h3><div style="max-height:260px;overflow-y:auto"><table id="pt"></table></div></div>
+    <div class="ca"><h3>⚠️ 危机事件(1990-今)</h3><div class="cl" id="cr"></div></div>
+  </div>
+</div>
+<div class="ft">数据源 FRED + yfinance · 不构成投资建议 · <a href="/meigu/" style="color:var(--bl)">刷新</a></div>
+
+<script>
+const A='/meigu/api';
+async function j(u){const r=await fetch(u);if(!r.ok)throw Error(r.status);return r.json()}
+
+// Market
+async function lm(){
+  const m=await j(A+'/market/current');
+  document.getElementById('ut').textContent='数据日期 '+m.spx.date;
+  document.getElementById('vb').innerHTML='<div class="ml">VIX恐慌</div><div class="mv">'+m.vix+'</div>';
+  const sc=m.spx.change_pct>=0?'var(--gn)':'var(--rd)';
+  document.getElementById('sb2').innerHTML='<div class="ml">S&P 500</div><div class="mv">'+m.spx.value.toLocaleString()+'</div><div class="mc" style="color:'+sc+'">'+(m.spx.change_pct>=0?'+':'')+m.spx.change_pct+'%</div>';
+  const nc=m.ndx.change_pct>=0?'var(--gn)':'var(--rd)';
+  document.getElementById('nb').innerHTML='<div class="ml">NASDAQ100</div><div class="mv">'+m.ndx.value.toLocaleString()+'</div><div class="mc" style="color:'+nc+'">'+(m.ndx.change_pct>=0?'+':'')+m.ndx.change_pct+'%</div>';
+}
+async function ls(){
+  const s=await j(A+'/market/signal');
+  document.getElementById('sg').innerHTML='<div class="ml">投资信号</div><div class="sb" style="background:'+s.signal_color+'22;color:'+s.signal_color+'">'+s.signal+'</div><div class="sd">'+s.action+'</div>';
+  document.getElementById('slv').innerHTML='<span style="color:var(--rd)">极度恐慌≥'+s.levels.extreme_fear+'</span><span style="color:var(--yl)">偏高≥'+s.levels.fear+'</span><span style="color:var(--gn)">偏低≤'+s.levels.complacency+'</span><span>极度平静≤'+s.levels.extreme_calm+'</span>';
+  document.getElementById('pv').textContent=s.percentile+'%';
+  document.getElementById('pb2').innerHTML='<div class="pm" style="left:'+s.percentile+'%"></div>';
+}
+async function lst(){
+  const d=await j(A+'/vix/stats');
+  document.getElementById('st').innerHTML=[
+    {l:'天数',v:d.total_days},{l:'均值',v:d.mean},{l:'最高',v:d.max,c:'var(--rd)'},{l:'最低',v:d.min,c:'var(--gn)'},
+    {l:'P50',v:d.p50},{l:'P75',v:d.p75},{l:'P90恐慌',v:d.p90,c:'var(--yl)'},{l:'P95',v:d.p95,c:'var(--rd)'},
+    {l:'P99',v:d.p99,c:'var(--rd)'},{l:'范围',v:d.date_range,s:1}
+  ].map(x=>'<div class="si"><div class="sv" style="color:'+(x.c||'var(--tx)')+';font-size:'+(x.s?'.6rem':'.9rem')+'">'+x.v+'</div><div class="sl2">'+x.l+'</div></div>').join('');
+}
+
+// Charts
+let c1=null,c2=null,c3=null;
+async function lv(){
+  const d=await j(A+'/vix/history?days=365');
+  const dt=d.data.map(r=>r.date),cl=d.data.map(r=>r.close);
+  const m20=[],m50=[],m200=[];
+  for(let i=0;i<cl.length;i++){m20.push(i>=19?cl.slice(i-19,i+1).reduce((a,b)=>a+b)/20:null);m50.push(i>=49?cl.slice(i-49,i+1).reduce((a,b)=>a+b)/50:null);m200.push(i>=199?cl.slice(i-199,i+1).reduce((a,b)=>a+b)/200:null)}
+  const ctx=document.getElementById('cv').getContext('2d');if(c1)c1.destroy();
+  c1=new Chart(ctx,{type:'line',data:{labels:dt,datasets:[
+    {label:'VIX',data:cl,borderColor:'#3b82f6',borderWidth:1.5,pointRadius:0,tension:.1},
+    {label:'MA20',data:m20,borderColor:'#f59e0b',borderWidth:1,pointRadius:0},
+    {label:'MA50',data:m50,borderColor:'#8b5cf6',borderWidth:1,pointRadius:0},
+    {label:'MA200',data:m200,borderColor:'#ef4444',borderWidth:1,pointRadius:0},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},
+    plugins:{legend:{labels:{color:'#94a3b8',usePointStyle:true,boxWidth:6}}},
+    scales:{x:{ticks:{color:'#64748b',maxTicksLimit:8}},y:{ticks:{color:'#64748b'},grid:{color:'rgba(30,41,59,.5)'}}}}});
+}
+async function lsc(id,url,regid){
+  const d=await j(url); const pts=d.data.slice(-365).map(r=>({x:r.vix,y:r[id]}));
+  const ctx=document.getElementById(id=='spx'?'cs':'cn').getContext('2d');
+  if(id=='spx'){if(c2)c2.destroy()}else{if(c3)c3.destroy()}
+  const datasets=[{label:id=='spx'?'VIX vs SPX':'VIX vs NDX',data:pts,backgroundColor:'rgba(59,130,246,0.4)',pointRadius:2}];
+  if(d.regression){
+    const ln=d.regression.line;
+    datasets.push({label:'回归线',data:[{x:ln[0].x,y:ln[0].y},{x:ln[1].x,y:ln[1].y}],borderColor:'#f59e0b',borderWidth:2,pointRadius:0,showLine:true,fill:false,type:'line'});
+    document.getElementById(regid).innerHTML='<b>回归线</b> Y='+d.regression.intercept.toLocaleString()+(d.regression.slope>=0?'+':'')+d.regression.slope+'×VIX | <b>R²='+d.regression.r2+'</b>（VIX解释了SPX变动的'+(d.regression.r2*100).toFixed(1)+'%）| <b>r='+d.regression.r+'</b>（完全负相关=-1，不相关=0）';
+  }
+  const cc=id=='spx'?(c2?c2:new Chart(ctx,{type:'scatter'})):(c3?c3:new Chart(ctx,{type:'scatter'}));
+  cc.data={datasets}; cc.options={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#94a3b8'}}},
+    scales:{x:{title:{text:'VIX',display:true,color:'#94a3b8'},ticks:{color:'#64748b'}},
+            y:{title:{text:id=='spx'?'S&P 500':'NASDAQ100',display:true,color:'#94a3b8'},ticks:{color:'#64748b'}}}};
+  cc.update(); if(id=='spx')c2=cc;else c3=cc;
+}
+
+// Forward returns
+async function lfw(id,url){
+  try{
+    const d=await j(url);const hd={};const hs={'1m':'1个月','3m':'3个月','6m':'6个月','12m':'12个月'};
+    for(const[k,v]of Object.entries(hs)){if(d[k]){for(const z of d[k]){if(!hd[z.zone]){hd[z.zone]={};hd[z.zone]._range=z.vix_range}hd[z.zone][k]=z}}}
+    let html='<div class="fc"><div class="fz">VIX区间</div></div>';
+    const order=['极度平静','平静','正常','偏高','恐慌','极度恐慌'];
+    for(const h of['1m','3m','6m','12m'])html+='<div class="fc"><div class="fz">'+hs[h]+'</div></div>';
+    for(const zn of order){const zd=hd[zn];if(!zd)continue;
+      html+='<div class="fc"><div class="fz" style="font-weight:600;color:var(--tx)">'+zn+'<br><span style="font-size:.52rem;color:var(--dm)">'+zd._range+'</span></div></div>';
+      for(const h of['1m','3m','6m','12m']){const z=zd[h];
+        if(z){const cl=z.avg>=0?'var(--gn)':'var(--rd)';
+          html+='<div class="fc"><div class="fv" style="color:'+cl+'">'+(z.avg>=0?'+':'')+z.avg+'%</div><div class="fp">['+z.ci_low+','+z.ci_high+']<br>'+z.pos_pct+'%正('+z.count+'次)</div></div>';
+        }else html+='<div class="fc"><div>-</div></div>';
+      }
+    }
+    document.getElementById(id).innerHTML=html;
+  }catch(e){}
+}
+
+// Backtesting
+async function lbt(){
+  try{
+    const d=await j(A+'/market/backtest');
+    let html='';
+    for(const bt of d.backtests||[]){
+      html+='<div class="bt-card"><div class="bt-th" style="color:var(--'+(bt.threshold>=30?'rd':bt.threshold>=20?'yl':'bl')+')">'+bt.label+'</div><div class="bt-h">'+bt.signal_count+'次信号</div>';
+      for(const h of bt.horizons||[]){
+        html+='<div class="bt-h"><b>'+h.horizon+'</b>: '+(h.avg>=0?'+':'')+h.avg+'% ['+h.ci_low+','+h.ci_high+']<br>胜率 '+h.win_rate+'% | 最差单笔 '+h.worst_trade+'% | 最大连续回撤 '+h.worst_drawdown+'%</div>';
+      }
+      html+='</div>';
+    }
+    document.getElementById('bt_grid').innerHTML=html||'<div style="color:var(--dm)">回测加载中...</div>';
+  }catch(e){console.error(e)}
+}
+
+// Peaks + Crisis
+async function lpk(){
+  const d=await j(A+'/vix/peaks?n=30');
+  document.getElementById('pt').innerHTML='<tr><th>#</th><th>日期</th><th>VIX</th></tr>'+d.peaks.map(p=>'<tr><td class="rk">#'+p.rank+'</td><td>'+p.date+'</td><td class="'+(p.value>40?'vr':'vy')+'">'+p.value+'</td></tr>').join('');
+}
+async function lcr(){
+  const d=await j(A+'/vix/crises');
+  document.getElementById('cr').innerHTML=d.events.map(e=>'<div class="ci"><div><div class="cn">'+e.name+'</div><div class="cd">高峰 '+e.peak_date+'</div></div><div class="cv" style="color:'+(e.peak_vix>40?'var(--rd)':'var(--yl)')+'">'+Math.round(e.peak_vix)+'</div></div>').join('');
+}
+
+async function la(){
+  await Promise.all([lm(),ls(),lst(),lv(),lsc('spx',A+'/market/correlation','cr_spx'),lsc('ndx',A+'/market/correlation_ndx','cr_ndx'),lfw('fw_spx',A+'/market/forward_returns'),lfw('fw_ndx',A+'/market/forward_returns_ndx'),lbt(),lpk(),lcr()]);
+}
+la();
+</script>
+</body>
+</html>
