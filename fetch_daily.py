@@ -99,13 +99,13 @@ def main():
     print(f"VIX Monitor 数据抓取 — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 50)
 
-    # Step 1: yfinance for latest data (fast, T-1)
-    print("\n📡 yfinance (最新数据):")
-    yf_total = yf_fetch()
-
-    # Step 2: FRED for historical backfill (fills any gaps)
+    # Step 1: FRED for historical backfill (fills any gaps) — MUST run before yfinance
     print("\n🏛️  FRED (历史底仓):")
     fred_total = fred_backfill()
+
+    # Step 2: yfinance for latest data (fast, T-1)
+    print("\n📡 yfinance (最新数据):")
+    yf_total = yf_fetch()
 
     # Summary
     conn = sqlite3.connect(DB_PATH)
