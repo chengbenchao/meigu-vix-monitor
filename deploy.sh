@@ -92,7 +92,7 @@ fi
 
 # ── 8. Cron ──────────────────────────────────
 log "配置定时抓取（工作日 18:00 北京时间）..."
-(crontab -l 2>/dev/null | grep -v 'fetch_daily.py'; echo "0 10 * * 1-5 cd $PROJECT_DIR && $(which python3) fetch_daily.py >> /var/log/meigu-fetch.log 2>&1") | crontab -
+(crontab -l 2>/dev/null | grep -v 'fetch_daily.py'; echo "0 10 * * 1-5 FRED_API_KEY=${FRED_API_KEY:-} cd $PROJECT_DIR && $(which python3) fetch_daily.py >> /var/log/meigu-fetch.log 2>&1") | crontab -
 
 # ── 9. Initial data fetch ───────────────────
 log "首次数据抓取（这可能需要几分钟）..."
