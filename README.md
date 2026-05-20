@@ -1,10 +1,20 @@
-# 🇺🇸 美Gu恐慌指数 VIX 监控
+# 🇺🇸 美股恐慌指数 VIX 监控
 
 > VIX × 标普500 × 纳斯达克100 — 巴菲特式恐慌投资仪表盘
 
 ![](https://img.shields.io/badge/data-FRED%20%2B%20yfinance-blue)
 ![](https://img.shields.io/badge/python-3.9%2B-green)
 ![](https://img.shields.io/badge/deploy-one--click-orange)
+
+## 公开访问
+
+| 地址 | 说明 |
+|------|------|
+| `http://www.xiaochao.store/` | Web3 科普站 |
+| `http://www.xiaochao.store/meigu/` | **VIX 监控仪表盘** |
+| `http://www.xiaochao.store/invest/` | 投资组合分析器 |
+
+> 以上三个路径公开访问，无需登录。
 
 ## 功能
 
@@ -47,19 +57,29 @@ sudo bash deploy.sh
 - **后端**: FastAPI + uvicorn
 - **前端**: 原生 HTML/CSS/JS + Chart.js
 - **数据库**: SQLite
-- **部署**: systemd + nginx + cron
+- **部署**: systemd user service + nginx + cron
 
 ## 项目结构
 
 ```
 .
-├── app.py              # FastAPI 后端
+├── app.py              # FastAPI 后端（13 个 API 端点）
 ├── fetch_daily.py      # 双源数据抓取（yfinance + FRED）
 ├── static/
-│   └── index.html      # 前端页面
-├── deploy.sh           # 一键部署脚本
+│   └── index.html      # 前端仪表盘
+├── deploy.sh           # 一键部署脚本（幂等）
 └── requirements.txt    # Python 依赖
 ```
+
+## 管理面板
+
+> 以下路径需登录（同一 session 共享），访问 `http://www.xiaochao.store/manage/` 进入登录页。
+
+| 地址 | 服务 | 认证 |
+|------|------|:--:|
+| `/manage/` | MISSION CONTROL 服务仪表盘 | session |
+| `/model/` | Model Switcher 模型切换 | session |
+| `/proxy/` | YACD 代理面板 | session |
 
 ## 数据不构成投资建议
 
